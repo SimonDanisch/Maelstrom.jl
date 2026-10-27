@@ -1,0 +1,39 @@
+name = "Maelstrom"
+uuid = "985d88d0-531a-45f2-84d9-51d3ce71157f"
+authors = ["Simon Danisch <sdanisch@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+AcceleratedKernels = "6a4ca0a5-0e36-4168-a932-d9be78d558f1"
+Adapt = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
+GeometryBasics = "5c1252a2-5f33-56bf-86c9-59e7332b4326"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+KernelAbstractions = "63c18a36-062a-441e-b654-da1e3ab1ce7c"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Mantle = "8f4c1f2e-6a3d-4b71-9c05-2e7d8a1b6f34"
+Mmap = "a63ad114-7e13-5084-954f-fe012c677804"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+Serialization = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+
+[compat]
+AcceleratedKernels = "0.5"
+Adapt = "4"
+GeometryBasics = "0.5"
+JSON = "1"
+KernelAbstractions = "0.10"
+LinearAlgebra = "1"
+Mantle = "0.1"
+Mmap = "1"
+Random = "1"
+SHA = "0.7, 1"
+Serialization = "1"
+Statistics = "1"
+julia = "1.12"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
