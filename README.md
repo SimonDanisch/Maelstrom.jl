@@ -33,8 +33,8 @@ at 1280×720 and 400 samples per pixel in 11 minutes on an AMD Radeon 8060S.</su
   is, a grid four times coarser elsewhere.
 - **Pressure:** multigrid-preconditioned conjugate gradient, with flexible GMRES when the
   V-cycle is not a usable CG preconditioner.
-- **Swirl that survives big steps:** advection–reflection (Zehnder et al. 2018) keeps a
-  vortex turning at one step per frame.
+- **Swirl that survives big steps:** on the sparse grid, advection–reflection (Zehnder et
+  al. 2018) keeps a vortex turning at one step per frame.
 - **Whitewater:** spray, foam and bubbles from the Ihmsen et al. 2012 model, made live
   from the solver's particles every frame.
 - **Bakes and checkpoints:** particle, level-set and whitewater frames on disk, and
@@ -46,24 +46,26 @@ water to the swirl with the sea's waves in it and stir it with the race's eddies
 
 ## Performance
 
-The same 16 s whirlpool, simulated four ways on one AMD Radeon 8060S (the Strix Halo
-integrated GPU) through Mantle and Vulkan. The funnel's depth checks that the faster
-solvers still make the same whirlpool as the SPH reference.
+Four seconds of the same whirlpool, simulated from the same starting vortex by
+[TrixiParticles](https://github.com/trixi-framework/TrixiParticles.jl) (weakly compressible
+SPH) and by Maelstrom, on one AMD Radeon 8060S (the Strix Halo laptop GPU), every frame
+written to disk:
 
-| Solver | Time for 16 s | Deepest point at 16 s |
-|---|---|---|
-| SPH (TrixiParticles on Mantle), 10 cm, 11.2 M particles | 22,889 s (6.4 h) | −12.0 m |
-| Dense FLIP, 5 cm | 13,220 s (3.7 h) | −10.7 m |
-| Sparse ST-FLIP, 5 cm, one step per frame | 1,245 s (21 min) | −8.1 m |
-| **Sparse ST-FLIP, 5 cm, advection–reflection (default)** | **1,877 s (31 min)** | **−11.4 m** |
+| Problem | TrixiParticles | Maelstrom, dense grid | Speedup | Maelstrom, sparse grid | Speedup |
+|---|---|---|---|---|---|
+| Naruto-sized basin, 10 m radius, at 10 cm | 5.2 min | 9.7 s | 32× faster | 59 s | 5× faster |
+| Naruto-sized basin, 10 m radius, at 5 cm | 71 min | 65 s | 66× faster | 2.5 min | 29× faster |
+| Film basin, 18 m radius and 12 m deep, at 10 cm | 91 min | 81 s | 67× faster | 2.7 min | 33× faster |
 
-One step per frame is fastest, but plain advect-then-project loses the throat's spin
-and the funnel comes out too shallow. Advection–reflection keeps it for 1.5× the cost:
-12× faster than the SPH reference at twice its resolution.
+SPH fills the whole basin with particles and steps at the speed of sound; FLIP keeps
+particles only in a band at the surface, the deep water on a grid, and steps with the
+flow. Kernel compilation is excluded. In the Naruto basin all three funnels end within
+0.2 m of each other. In the deep film basin the dense grid's funnel stays shallower
+(9.0 m against SPH's 11.9 m): without advection–reflection it loses spin at one step per
+frame. The sparse grid keeps its throat open to the floor, as SPH's nearly is.
 
-The SPH reference is not a slow one: on the SPHERIC dam break (3 M particles, RTX 4000
-Ada) TrixiParticles on Mantle finishes in 17 minutes, DualSPHysics 5.4 in 25 minutes on
-the same GPU.
+TrixiParticles is not a slow reference: on the SPHERIC dam break (3 M particles, RTX 4000
+Ada) it finishes in 17 minutes, DualSPHysics 5.4 in 25 minutes on the same GPU.
 
 ## Rendering with RayMakie
 
